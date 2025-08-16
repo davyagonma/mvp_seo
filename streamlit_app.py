@@ -40,7 +40,7 @@ def generate_brief(keyword: str, lang: str, tone: str, brand: str | None) -> dic
 # --- UI ---
 st.set_page_config(page_title="SEO Brief Generator", page_icon="📈", layout="wide")
 st.title("📈 SEO Brief Generator")
-st.markdown("Générez des briefs SEO complets à partir d'un mot-clé en quelques secondes.")
+st.markdown("Générez des briefs SEO complets à partir d'un mot-clé en quelques secondes..")
 
 with st.form("brief_form"):
     keyword = st.text_input("Mot-clé", placeholder="ex: création site vitrine")
