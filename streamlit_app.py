@@ -1,15 +1,11 @@
 import os
 import json
 import streamlit as st
-from openai import OpenAI
+import google.generativeai as genai
 
-# Clé API depuis l'environnement
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    st.error("⚠️ Définis la variable OPENAI_API_KEY avant de lancer.")
-    st.stop()
+# Configure API key
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Prompt template
 BRIEF_PROMPT = """Tu es un expert SEO senior. Tâche: produire un brief complet.
@@ -28,17 +24,18 @@ Donne un JSON STRICT:
 Répond uniquement en JSON.
 """
 
-def generate_brief(keyword: str, lang: str, tone: str, brand: str | None):
-    prompt = BRIEF_PROMPT.format(
-        keyword=keyword, lang=lang, tone=tone, brand=brand or ""
-    )
-    resp = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role":"user","content":prompt}],
-        temperature=0.2,
-        response_format={"type":"json_object"},
-    )
-    return json.loads(resp.choices[0].message.content)
+
+
+def generate_brief(keyword: str, lang: str, tone: str, brand: str | None) -> dict:
+    prompt = BRIEF_PROMPT.format(keyword=keyword, lang=lang, tone=tone, brand=brand or "")
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
+    # Gemini renvoie souvent du texte brut, parfois avec ```json
+    text = response.text.strip()
+    if text.startswith("```"):
+        text = text.strip("` \n").replace("json", "", 1).strip()
+    return json.loads(text)
+
 
 # --- UI ---
 st.set_page_config(page_title="SEO Brief Generator", page_icon="📈", layout="wide")
