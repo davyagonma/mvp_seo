@@ -33,7 +33,7 @@ Répond uniquement en JSON.
 def generate_brief(keyword: str, lang: str, tone: str, brand: str | None) -> dict:
     prompt = BRIEF_PROMPT.format(keyword=keyword, lang=lang, tone=tone, brand=brand or "")
 
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     response = model.generate_content(prompt)
 
     # Récupération robuste du texte
